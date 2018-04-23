@@ -1,0 +1,36 @@
+---
+
+- name: Blocks error handling
+  hosts: db
+  gather_facts: false
+  tasks:
+
+    - name: Using blocks with error handling
+      block:
+        - name: Normal execution
+          debug:
+            msg: "I execute normally"
+
+        - name: Trigger a fail
+          command: /bin/false
+
+        - name: Never executed
+          debug:
+            msg: "I never execute due to the fail above"
+
+      rescue:
+        - name: Rescue block
+          debug:
+            msg: "I caught an error"
+
+    #    - name: command failed
+    #      command: /bin/false
+
+    #    - name: Never executed
+    #      debug:
+    #        msg: "I never execute"
+
+      always:
+        - name: Always executed
+          debug:
+            msg: "I always execute"

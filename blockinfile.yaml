@@ -1,0 +1,29 @@
+---
+
+- name: blockinfile example
+  hosts: web
+  gather_facts: false
+  tasks:
+
+    - name: create directory
+      file:
+        path: /tmp/test
+        state: directory
+
+    - name: blockinfile test
+      blockinfile:
+        create: true
+        path: /tmp/test/alisha.txt
+        block: |
+          Hallo, ik ben Alisha
+          Ben bijna 9 maanden oud
+            Mijn mama heeft Thanicha
+            Zij is 35 jaar oud
+
+    - name: Second block
+      blockinfile:
+        path: /tmp/test/alisha.txt
+        insertbefore: BOF
+        block: |
+          Dit is de tweede block
+          Ik snap het niet

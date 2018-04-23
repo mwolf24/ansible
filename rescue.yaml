@@ -1,0 +1,30 @@
+---
+
+- name: Rescue example
+  hosts: web1.example.com
+  gather_facts: false
+  tasks:
+
+    - name: Start van de block    
+      block:
+  
+        - name: Create error
+          shell: /bin/false
+
+        - name: I will not execute
+          debug:
+            msg: "I will not execute" 
+
+      rescue:
+        - name: Execute the rescue
+          debug:
+            msg: "Something went wrong"
+      
+      always:
+        - name: Always make sure user exists
+          user:
+            name: alisha
+            uid: 252525
+            home: /home/alisha
+  
+      

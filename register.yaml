@@ -1,0 +1,52 @@
+---
+
+- name: Tasks that register variables, prints them, make change and print again 
+  hosts: web1.example.com
+  gather_facts: true
+  tasks:
+
+  - name: Get stats of file
+    stat:
+      path: /etc/passwd
+    register: filestats
+
+  - name: Print stats
+    debug:
+      var: filestats
+
+  - name: Add user
+    user:
+      name: michel
+      uid: 242424
+      state: present
+
+  - name: Change the owner
+    file:
+      path: /root/bla
+      owner: michel
+
+  - name: Get new stats
+    stat:
+      path: /root/bla
+    register: stats2
+
+  - name: print new owner
+    debug:
+      var: stats2.stat.pw_name
+
+  - name: Change owner when not root
+    file:
+      path: /root/bla
+      owner: root
+      mode: 0700
+    when: stats2.stat.pw_name != 'root'
+
+  - name: Get new owner
+    stat:
+      path: /root/bla
+    register: stats3
+
+  - name: Print new owner
+    debug:
+      var: stats3.stat.pw_name
+

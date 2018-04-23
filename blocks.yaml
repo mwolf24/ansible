@@ -1,0 +1,58 @@
+---
+
+- name: Playbook with blocks
+  gather_facts: true
+  hosts: all !c6
+  tasks:
+
+  - name: Create folder
+    file:
+      path: /etc/ansible/facts.d
+      state: directory
+
+  - name: Place facts on webservers
+    copy:
+      src: web.fact
+      dest: /etc/ansible/facts.d/web.fact
+    when: ansible_distribution_major_version == "7"
+
+  - name: Place facts on db servers
+    copy:
+      src: db.fact
+      dest: /etc/ansible/facts.d/db.fact
+    when: ansible_distribution == "Debian"
+
+      
+  - name: Apache block
+    block:
+
+      - name: Install Apache
+        yum:
+          name: httpd
+          state: present
+
+      - name: Enable and start Apache
+        service:
+          name: httpd
+          state: started
+          enabled: true
+    when: ansible_distribution == "CentOS"
+
+
+  - name: Mariadb block
+    block:
+
+      - name: Install mariadb server
+        apt:
+          name: mariadb-server
+          state: latest
+          update_cache: yes
+
+      - name: Enable and start Mariadb
+        service:
+          name: mysql
+          state: started
+          enabled: true
+    when: ansible_distribution == "Debian"
+
+
